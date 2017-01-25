@@ -1,0 +1,88 @@
+The project is split into 2 separate header files and a source file.
+
+The first header file class_tictactoe.h has the members and member functions related to handling the basic structure of the tictactoe game.
+Description is as follows: 
+
+class tictactoe{
+square[10] = {'o','1','2','3','4','5','6','7','8','9'}; Assigns values to the individual squares
+checkwin() Checks a win or a draw
+checkwin(string) Checks a win or a draw considering the next state
+board() Sets up the basic board
+mark_square(int, int, char &, char) Marks the squares -> "X" if it is player 1 and "X" if it is player 2 
+resetboard() resets the board
+}
+
+The first header file class_tictactoe.h has the members and member functions related to handling the basic structure of the tictactoe game.
+Description is as follows: 
+
+class QLearning{
+public:
+	
+	string start_state = "123456789"; // Assigns the start state of the board
+	int max_games; //Max games
+	int games; //The current game being played
+	float learning_rate; //Learning rate for the algorithm 
+	float discount; //Discount rate for the algorithm
+	string current_state; //Current state of the board
+	string next_state; //Next state generated if the current player makes a move
+	string state_key;	//Comprises of state and player
+	string next_key; //Comprises of next state and player
+	int player; //The player playing the current game
+	int action; //The move the current player can make
+	int opponent; //Opponent of the current player
+	double reward; //Rewards assigned for winning or losing
+	float epsilon; //Probability of Exploration vs Exploitation
+
+	string make_key(string, int); //Makes the key given a state of the board and the player 
+	void add_key(string key); //Adds to the Qtable
+	int choose_action(string, float); Chooses an allowable actions for a player based on the current state of the board
+	string execute(string, int);// Marks a square based on the action the player took
+	void reinforcement(); //Awards the rewards checking if it's a win or a draw
+	void updateQ(string, int, string); //Updates the Q table given a state key, reward and the next key
+	int opponent_player(); //Returns the opponent of the current player
+	void switch_player(); //Switches the players
+	bool checkintable(string); //Checks if a state key is present in the table
+
+private:
+	double lowestQ(string); //Returns the lowest Q value for a set of actions possible for a statekey
+	double highestQ(string); //Returns the highest Q value for a set of actions possible for a statekey
+	vector<int> allowedactions(string); //Returns the list of allowed actions for a stat key
+};
+
+Functioning of the game:
+The pseudo code:
+
+state = start_state;
+	games = 0;
+	while(games<max_games)
+		state_key = make_key(state,player)
+		if state_key is not in table()
+			add_key();
+		action = choose_action(statekey,Q)
+		next_state = execute(action);
+		next_key = make_key(next_state, opponent(player));
+		reward = reinforcement(next_state);
+		if(next_key) is not in table
+			add_key(next_key);
+		updateQ(state, action, next_key, reward);
+		if game is over
+			reset game
+			state = start_state;
+			games += 1;
+		else
+			state= next_state
+			switch_players()
+
+Updating Q values:
+The pseudo code:
+updateQValues(stateKey, action, nextKey, reward)
+  if game over
+     expected = reward
+  else
+     if player is X
+        expected = reward + (discount * lowestQvalue(nextKey))
+     else
+        expected = reward + (discount * highestQvalue(nextKey))
+  change = learningRate * (expected - table[stateKey][action])
+  table[stateKey][action] += change
+
